@@ -41,13 +41,15 @@ const SearchProduct = () => {
                     />
                 </div>
                 <div className="mb-4">
-                    <input
-                        type="text"
-                        placeholder="Thể loại"
+                    <select
                         value={category}
                         onChange={(e) => setCategory(e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
-                    />
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300" >
+                        <option value="">Chọn thể loại</option>  {/* Giá trị rỗng */}
+                        <option value="men">Nam</option>
+                        <option value="women">Nữ</option>
+                        <option value="kid">Trẻ em</option>
+                    </select>
                 </div>
                 <div className="mb-6">
                     <input

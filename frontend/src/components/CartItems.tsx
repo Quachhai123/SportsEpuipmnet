@@ -113,8 +113,8 @@ const CartItems = () => {
             </Document>
         );
     };
-
-
+    
+    
     return (
         <section className="max_padd_container pt-28">
             <table className="w-full mx-auto">

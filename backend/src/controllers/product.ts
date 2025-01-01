@@ -139,9 +139,10 @@ export const getProductDetail = async (req: Request, res: Response) => {
 
 export const popularProduct = async (req: Request, res: Response) => {
     try {
-        const popularProducts = await Product.find({ category: "men" })
-            .populate("brand", "name description image")
-            .limit(4);
+        // Truy vấn tất cả sản phẩm, không giới hạn category
+        const popularProducts = await Product.find({})
+            .populate("brand", "name description image") // Lấy thêm thông tin thương hiệu
+            .limit(6); // Giới hạn 4 sản phẩm
 
         res.status(200).json({
             status: 200,
@@ -226,15 +227,14 @@ export const searchProduct = async (req: Request, res: any) => {
             searchConditions.name = { $regex: name, $options: 'i' };
         }
         if (category) {
-            searchConditions.category = { $regex: category, $options: 'i' };
-        }
-        if (description) {
-            searchConditions.description = { $regex: description, $options: 'i' };
-        }
+            searchConditions.category = { $regex: `^${category}$`, $options: 'i' };
+        }        
         if (brandName) {
-            const brand = await Brand.findOne({ name: { $regex: brandName, $options: 'i' } });
-            if (brand) {
-                searchConditions.brand = brand._id;
+            const brands = await Brand.find({ name: { $regex: brandName, $options: 'i' } });
+            if (brands.length > 0) {
+                // Lấy danh sách ID của tất cả thương hiệu khớp
+                const brandIds = brands.map((brand) => brand._id);
+                searchConditions.brand = { $in: brandIds }; // Tìm các sản phẩm thuộc nhiều thương hiệu
             } else {
                 return res.status(404).json({
                     status: 404,
@@ -244,7 +244,7 @@ export const searchProduct = async (req: Request, res: any) => {
             }
         }
 
-        const products = await Product.find(searchConditions).populate('brand', 'name description image');
+        const products = await Product.find(searchConditions).populate('brand', 'name description');
 
         res.status(200).json({
             status: 200,
